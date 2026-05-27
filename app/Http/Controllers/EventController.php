@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
+    // Halaman Depan publik (katalog acara) — siapa saja boleh akses
+    public function home()
+    {
+        $events = Event::with('category')->latest()->get();
+        return view('home', compact('events'));
+    }
+
+    // Halaman Detail Dinamis publik — /event/{event}
+    public function show(Event $event)
+    {
+        $event->load('category');
+        return view('event_show', compact('event'));
+    }
+
     // Fungsi untuk menampilkan halaman utama Manajemen Acara
     public function index()
     {

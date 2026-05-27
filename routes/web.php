@@ -1,37 +1,52 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
 
-Route::get('/', function () {
-    return view('home');
+/*
+|--------------------------------------------------------------------------
+| RUTE PUBLIK (Siapa saja boleh akses)
+|--------------------------------------------------------------------------
+*/
+Route::get('/', [EventController::class, 'home']);
+Route::get('/event/{event}', [EventController::class, 'show'])->whereNumber('event');
+
+/*
+|--------------------------------------------------------------------------
+| RUTE TAMU (hanya untuk pengunjung yang BELUM login)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister']);
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::get('/dashboard', [CategoryController::class, 'index']);
+/*
+|--------------------------------------------------------------------------
+| RUTE PANEL ADMIN (wajib login — dijaga middleware 'auth')
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-// Jalur untuk menampilkan halaman input
-Route::get('/dashboard/category/create', [CategoryController::class, 'create']);
+    Route::get('/dashboard', [CategoryController::class, 'index']);
 
-// Jalur untuk memproses data yang dikirim dari form
-Route::post('/dashboard/category/store', [CategoryController::class, 'store']);
+    // CRUD Kategori
+    Route::get('/dashboard/category/create', [CategoryController::class, 'create']);
+    Route::post('/dashboard/category/store', [CategoryController::class, 'store']);
+    Route::get('/kategori/{category}/edit', [CategoryController::class, 'edit']);
+    Route::put('/kategori/{category}', [CategoryController::class, 'update']);
+    Route::delete('/kategori/{category}', [CategoryController::class, 'destroy']);
 
-// Jalur untuk membuka Halaman Form Edit
-Route::get('/kategori/{category}/edit', [CategoryController::class, 'edit']);
-
-// Jalur untuk memproses penyimpanan data yang di-edit (Perhatikan method PUT)
-Route::put('/kategori/{category}', [CategoryController::class, 'update']);
-
-// Jalur untuk memproses penghapusan data (Perhatikan method DELETE)
-Route::delete('/kategori/{category}', [CategoryController::class, 'destroy']);
-
-
-// [2] Daftarkan jalurnya di bagian bawah file
-Route::get('/event/create', [EventController::class, 'create']);
-Route::post('/event/store', [EventController::class, 'store']);
-
-Route::get('/events', [EventController::class, 'index']);
-
-Route::get('/event/{event}/edit', [EventController::class, 'edit']);
-Route::put('/event/{event}', [EventController::class, 'update']);
-Route::delete('/event/{event}', [EventController::class, 'destroy']);
+    // CRUD Acara
+    Route::get('/events', [EventController::class, 'index']);
+    Route::get('/event/create', [EventController::class, 'create']);
+    Route::post('/event/store', [EventController::class, 'store']);
+    Route::get('/event/{event}/edit', [EventController::class, 'edit']);
+    Route::put('/event/{event}', [EventController::class, 'update']);
+    Route::delete('/event/{event}', [EventController::class, 'destroy']);
+});
