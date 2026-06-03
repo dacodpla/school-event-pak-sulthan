@@ -21,8 +21,10 @@
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                     @auth
-                        <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/events">Manajemen Acara</a></li>
+                        @if(Auth::user()->role === 'admin')
+                            <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/events">Manajemen Acara</a></li>
+                        @endif
                     @endauth
                 </ul>
                 <ul class="navbar-nav ms-auto">
@@ -38,13 +40,18 @@
                             <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
                                 Halo, {{ Auth::user()->name }}
+                                @if(Auth::user()->role === 'admin')
+                                    <span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">Admin</span>
+                                @endif
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
-                                <li><a class="dropdown-item" href="/events">Manajemen Acara</a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                @if(Auth::user()->role === 'admin')
+                                    <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="/events">Manajemen Acara</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                @endif
                                 <li>
-                                    <form action="/logout" method="POST" class="d-inline">
+                                    <form action="/logout" method="POST">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger fw-semibold">
                                             Keluar / Logout

@@ -27,11 +27,14 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| RUTE PANEL ADMIN (wajib login — dijaga middleware 'auth')
+| RUTE PANEL ADMIN (wajib login sebagai Admin — dijaga middleware 'admin')
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware('admin')->group(function () {
 
     Route::get('/dashboard', [CategoryController::class, 'index']);
 

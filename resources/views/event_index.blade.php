@@ -1,6 +1,7 @@
 @extends('layouts.app')
+@section('title', 'Manajemen Acara')
 @section('content')
-<div class="container mt-4 mb-5">
+<div>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="fw-bold text-primary">Manajemen Data Acara</h3>
         <a href="/event/create" class="btn btn-success shadow-sm">
